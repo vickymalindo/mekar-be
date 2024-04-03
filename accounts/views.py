@@ -10,10 +10,13 @@ def account_list(request):
   if request.method == 'GET':
     accounts = Account.objects.all()
     serializer = AccountSerializer(accounts, many=True)
-    return JsonResponse({"accounts": serializer.data})
+    return Response({"status": "success", "message": "Get accounts success", "accounts": serializer.data})
   
   if request.method == 'POST':
+    print(request.data)
     serializer = AccountSerializer(data=request.data)
     if serializer.is_valid():
       serializer.save()
-      return Response(serializer.data, status=status.HTTP_201_CREATED)
+      return Response({"status": "success", "message": "Insert account success", "account": serializer.data}, status=status.HTTP_201_CREATED)
+    else:
+      return Response({"status": "error", "message": serializer.errors}, status=status.HTTP_404_NOT_FOUND)
